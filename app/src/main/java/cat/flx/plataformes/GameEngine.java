@@ -128,6 +128,18 @@ public class GameEngine {
         else {
             if (down) input.pause();                    // DEAD-ZONE
         }
+
+        //GAME OVER TOUCH TO RESTART
+        if (act == MotionEvent.ACTION_DOWN && bonk.getState() == 3) {
+            bonk = new Bonk(this, 0,140);
+            scene.setRemainingHearts(3);
+            scene.setScore(0);
+            resume();
+            //RECARGAR ESCENA
+            scene = new Scene(this);
+            scene.loadFromFile(R.raw.main_scene);
+        }
+
         return true;
     }
 
@@ -146,7 +158,7 @@ public class GameEngine {
         return true;
     }
 
-    private Paint paint, paintKeys, paintScore, paintGameOver;
+    private Paint paint, paintKeys, paintScore, paintGameOverRectangle, paintGameOverText, paintGameOverAll;
     private int screenWidth, screenHeight, scaledWidth;
     private float scale;
 
@@ -196,9 +208,15 @@ public class GameEngine {
             paintScore = new Paint();
             paintScore.setColor(Color.BLACK);
             paintScore.setTextSize(5);
-            paintGameOver = new Paint();
-            paintGameOver.setColor(Color.RED);
-            paintGameOver.setTextSize(70);
+
+            //GAME OVER
+            paintGameOverText = new Paint(paintScore);
+            paintGameOverText.setColor(Color.WHITE);
+            paintGameOverText.setTextSize(10);
+            paintGameOverRectangle = new Paint(paintKeys);
+            paintGameOverRectangle.setColor(Color.rgb(0, 0, 0));
+            paintGameOverRectangle.setAlpha(170); //Opacity 0 - 255
+            paintGameOverAll = new Paint(paintGameOverText);
         }
 
         // Refresh scale factor if screen has changed sizes
@@ -238,28 +256,30 @@ public class GameEngine {
         canvas.drawRect(81, 76, 99, 99, paintKeys);
         canvas.drawText("^", 88, 92, paint);
 
+        //GAME OVER
+        if (bonk.getState() == 3){
+            stop();
+            String gameOver = "GAME OVER";
+            //String tryAgain = "Try Again";
+            canvas.drawRect(0, 0, 100, 100, paintGameOverRectangle);
+            canvas.drawText(gameOver, 50 - paintGameOverAll.measureText(gameOver) / 2, 55, paintGameOverAll);
+            //canvas.drawText(tryAgain, 50 - paintGameOverAll.measureText(tryAgain) / 2, 60, paintGameOverAll);
+        }
+
         //SCORE
         canvas.drawText("Score: " + scene.getScore(),70,5, paintScore);
         // HEARTS
         canvas.scale(scale * scaledWidth / 11000, scale * SCALED_HEIGHT / 5000);
-        if(scene.getHeartsTest() == 3) {
+        if(scene.getRemainingHearts() == 3) {
             heart1.draw(canvas);
             heart2.draw(canvas);
             heart3.draw(canvas);
-        }else if (scene.getHeartsTest() == 2){
+        }else if (scene.getRemainingHearts() == 2){
             heart1.draw(canvas);
             heart2.draw(canvas);
-        }else if (scene.getHeartsTest() == 1){
+        }else if (scene.getRemainingHearts() == 1){
             heart1.draw(canvas);
         }
-
-        //GAME OVER
-       // public void gameOver{
-        //canvas.scale(scale * scaledWidth / 100, scale * SCALED_HEIGHT / 100);
-        if(bonk.getState() == 3) {
-            canvas.drawText("GAME OVER", 30, 30, paintGameOver);
-        }
-        //}
     }
 
 }

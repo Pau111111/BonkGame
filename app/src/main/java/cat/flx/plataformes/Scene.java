@@ -163,7 +163,9 @@ public class Scene {
     public int getSceneHeight() { return sceneHeight; }
     public int getWaterLevel() { return WATERLEVEL; }
     public int getScore() { return score; }
-    public int getHeartsTest(){ return  remainingHearts; }
+    public void setScore(int setScore) {score = setScore;}
+    public int getRemainingHearts(){ return  remainingHearts; }
+    public void setRemainingHearts(int setHearts){remainingHearts = setHearts;}
 
     public int getWidth() { return sceneWidth * 16; }
     public int getHeight() { return sceneHeight * 16; }
